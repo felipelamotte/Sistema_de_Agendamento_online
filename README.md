@@ -61,7 +61,9 @@ Lembretes: O sistema deve enviar lembretes automáticos antes da consulta.
 -Busca e Filtro (Paciente): Crie a funcionalidade de buscar médicos por Especialidade e Convênio.
 -Marcação de Consulta: Implemente a lógica principal para:
 1:Listar horários disponíveis para um médico.
+
 2:Permitir que o paciente selecione e agende um horário.
+
 3:Atualizar o status do horário para "Ocupado".
 
 3.3 Deploy 
