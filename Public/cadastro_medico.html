@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">     
+    
+    <title>Sistema de Agendamento | Cadastro de Médico</title>
+    
+    <link rel="stylesheet" href="/css/style.css"> 
+</head>
+<body>
+    
+    <header>
+        <h1>Sistema de Agendamento</h1>
+        <button id="logout-button" onclick="logout()" title="Sair da Aplicação">Sair (Logout)</button>
+    </header>
+
+    <div class="container-cadastro">
+        <h2>Cadastro de Novo Médico</h2>
+
+        <form id="form-cadastro-medico" onsubmit="cadastrarMedico(event)">
+            
+            <label for="nomeMedico">Nome Completo *:</label>
+            <input type="text" 
+                   id="nomeMedico" 
+                   name="nome" 
+                   required 
+                   placeholder="Dr. João da Silva"
+                   title="Nome completo do médico">
+            
+            <label for="crmMedico">CRM (Registro) *:</label>
+            <input type="text" 
+                   id="crmMedico" 
+                   name="crm" 
+                   required 
+                   placeholder="123456"
+                   title="Número de Registro do Conselho Regional de Medicina">
+            
+            <label for="especialidadeMedico">Especialidade *:</label>
+            <input type="text" 
+                   id="especialidadeMedico" 
+                   name="especialidade" 
+                   required 
+                   placeholder="Ex: Cardiologia, Ortopedia"
+                   title="Especialidade do médico">
+            
+            <label for="emailMedico">E-mail (para login) *:</label>
+            <input type="email" 
+                   id="emailMedico" 
+                   name="email" 
+                   required 
+                   placeholder="joao.silva@clinica.com"
+                   title="E-mail de acesso ao sistema">
+            
+            <button type="submit" title="Confirmar Cadastro">Cadastrar Médico</button>
+            <button type="button" onclick="window.location.href='index.html'" title="Voltar para a página inicial">Voltar</button>
+        </form>
+    </div>
+
+    <script src="/js/script.js"></script> 
+    </body>
+</html>

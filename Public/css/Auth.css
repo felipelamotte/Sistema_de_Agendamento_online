@@ -1,0 +1,228 @@
+/* /css/Auth.css */
+
+/* =================================================== */
+/* MENSAGENS E ALERTAS */
+/* =================================================== */
+
+/* Para mensagens de erro no login/cadastro */
+#login-message, 
+#cadastro-message,
+#login-medico-message,
+#cadastro-medico-message { 
+    color: red;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* =================================================== */
+/* CLASSES AUXILIARES */
+/* =================================================== */
+
+/* Oculta o elemento. Usado para containers que devem começar invisíveis. */
+.hidden {
+    display: none !important; 
+}
+
+/* sr-only: Oculta a label visualmente, mas mantém para leitores de tela (Acessibilidade) */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* =================================================== */
+/* ESTILOS DE LAYOUT BASE */
+/* =================================================== */
+
+body {
+    /* Opcional: Estilo de fundo do body */
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+#div-autenticacao-principal {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white; /* Fundo branco para o container principal */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Garante margem para separar visualmente o conteúdo */
+#container-paciente-login,
+#container-paciente-cadastro,
+#container-medico-login,
+#container-medico-cadastro {
+    padding: 10px 0;
+}
+
+/* Estilos para inputs e selects */
+input[type="text"], 
+input[type="password"],
+select { 
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin: 8px 0; /* Espaçamento vertical uniforme */
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Estilo para botões de submissão (Cadastrar e Entrar, Entrar como Médico/Paciente) */
+form button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #28a745; /* Verde para ação principal */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+form button[type="submit"]:hover {
+    background-color: #1e7e34;
+}
+
+/* Estilos de Botão de Seleção de Perfil */
+#selecao-perfil button {
+    padding: 10px 20px;
+    margin: 10px;
+    cursor: pointer;
+    background-color: #007bff; /* Azul para seleção */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+#selecao-perfil button:hover {
+    background-color: #0056b3;
+}
+
+/* Garante que o container inicial esteja visível no carregamento */
+#selecao-perfil {
+    display: block; 
+}
+
+
+/* =================================================== */
+/* ESTILOS DE ESPECIALIDADE MULTIPLA (CADASTRO MÉDICO) */
+/* =================================================== */
+
+/* Estilos para o rótulo da especialidade */
+#div-especialidade-multipla label[for="select-adicionar-especialidade"] {
+    display: block; 
+    margin-bottom: 5px;
+    text-align: left; /* Alinhamento ao bloco */
+}
+
+/* Ajuste do select para caber no fluxo */
+#div-especialidade-multipla select {
+    margin-top: 0;
+    margin-bottom: 8px;
+    width: 100%; /* Ajuste a largura para evitar o calc(100% - 22px) */
+}
+
+
+/* -- Input de Especialidade Personalizada -- */
+
+#input-especialidade-personalizada {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#input-especialidade-personalizada input[type="text"] {
+    margin-bottom: 0; 
+    width: 100%;
+}
+
+/* Estilo para o botão de adicionar especialidade personalizada */
+.btn-adicionar-personalizada {
+    width: 100%;
+    margin: 5px 0 8px 0 !important; 
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-adicionar-personalizada:hover {
+    background-color: #0056b3;
+}
+
+
+/* -- Lista de Tags de Especialidade -- */
+
+.lista-especialidades-box {
+    margin-top: 8px;
+    min-height: 20px;
+    border: 1px solid #ddd;
+    padding: 5px;
+    border-radius: 4px;
+    text-align: left;
+}
+
+.mensagem-sem-especialidade {
+    color: #888; 
+    font-size: 0.9em;
+}
+
+/* NOVO: Estilo para a tag de especialidade individual (Classe adicionada no Auth.js) */
+.especialidade-tag {
+    display: inline-block;
+    background-color: #e9ecef; /* Fundo cinza claro */
+    color: #495057; /* Texto cinza escuro */
+    padding: 4px 8px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    border-radius: 15px; /* Bordas arredondadas (pill shape) */
+    font-size: 0.9em;
+}
+
+/* NOVO: Estilo para o botão 'x' de remoção na tag */
+.remover-especialidade-btn {
+    background: none;
+    border: none;
+    color: #dc3545; /* Cor vermelha para indicar remoção */
+    font-weight: bold;
+    margin-left: 5px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1; /* Alinha o 'x' com o texto */
+    font-size: 1.1em;
+}
+
+.remover-especialidade-btn:hover {
+    color: #c82333;
+}
+
+
+/* =================================================== */
+/* ESTILOS DE LINKS */
+/* =================================================== */
+
+/* Estilo para links de navegação (Cadastre-se/Faça login/Voltar) */
+p a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+p a:hover {
+    text-decoration: underline;
+}

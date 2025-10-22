@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Área de Autenticação</title>
+    <link rel="stylesheet" href="/css/Auth.css">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon"> 
+    
+    <script>
+        // Funções de navegação simples (serão melhoradas no Auth.js)
+        function selecionarPerfil(tipo) {
+            if (tipo === 'paciente') { navigateTo('container-paciente-login'); }
+            if (tipo === 'medico') { navigateTo('container-medico-login'); }
+        }
+        function mostrarLoginPaciente() { navigateTo('container-paciente-login'); }
+        function mostrarCadastroPaciente() { navigateTo('container-paciente-cadastro'); }
+        function mostrarLoginMedico() { navigateTo('container-medico-login'); }
+        function mostrarCadastroMedico() { navigateTo('container-medico-cadastro'); }
+        function voltarSelecao() { navigateTo('selecao-perfil'); }
+        
+        // Função centralizada para navegação (definida no Auth.js principal)
+        function navigateTo(targetId) {
+             document.querySelectorAll('#selecao-perfil, #container-paciente-login, #container-paciente-cadastro, #container-medico-login, #container-medico-cadastro').forEach(el => {
+                if(el) el.classList.add('hidden');
+             });
+
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.classList.remove('hidden');
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="div-autenticacao-principal"> 
+        <h1 id="h1">Área de Autenticação</h1>
+
+        <div id="selecao-perfil">
+            <h2>Como você gostaria de entrar?</h2>
+            <button onclick="selecionarPerfil('paciente')">Entrar como Paciente</button>
+            <button onclick="selecionarPerfil('medico')">Entrar como Médico</button>
+        </div>
+
+        <div id="container-paciente-login" class="hidden">
+            <h2>Login de Paciente</h2>
+            <p id="login-message"></p> 
+            <form id="form-login-paciente">
+                <label for="login-cpf" class="sr-only">CPF</label>
+                <input type="text" id="login-cpf" placeholder="Seu CPF" required title="Seu CPF">
+                
+                <label for="login-senha" class="sr-only">Senha</label>
+                <input type="password" id="login-senha" placeholder="Sua Senha" required title="Sua Senha">
+                
+                <button type="submit">Entrar como Paciente</button>
+            </form>
+            <p>Não tem conta? <a href="#" onclick="mostrarCadastroPaciente()">Cadastre-se</a></p>
+            <p><a href="#" onclick="voltarSelecao()">Voltar à seleção de perfil</a></p>
+        </div>
+
+        <div id="container-paciente-cadastro" class="hidden">
+            <h2>Novo Cadastro de Paciente</h2>
+            <p id="cadastro-message"></p>
+            <form id="form-cadastro-paciente">
+                <label for="cadastro-nome" class="sr-only">Nome Completo</label>
+                <input type="text" id="cadastro-nome" placeholder="Seu Nome Completo" required title="Seu Nome Completo">
+                
+                <label for="cadastro-cpf" class="sr-only">CPF</label>
+                <input type="text" id="cadastro-cpf" placeholder="Seu CPF" required title="Seu CPF">
+                
+                <label for="cadastro-senha" class="sr-only">Senha</label>
+                <input type="password" id="cadastro-senha" placeholder="Crie uma Senha" required title="Crie uma Senha">
+                
+                <button type="submit">Cadastrar e Entrar</button>
+            </form>
+            <p>Já tem conta? <a href="#" onclick="mostrarLoginPaciente()">Faça login</a></p>
+            <p><a href="#" onclick="voltarSelecao()">Voltar à seleção de perfil</a></p>
+        </div>
+        
+        <div id="container-medico-login" class="hidden">
+            <h2>Login de Médico</h2>
+            <p id="login-medico-message"></p>
+            <form id="form-login-medico">
+                <label for="login-medico-crm" class="sr-only">CRM</label>
+                <input type="text" id="login-medico-crm" placeholder="Seu CRM" required title="Seu CRM">
+                
+                <label for="login-medico-senha" class="sr-only">Senha</label>
+                <input type="password" id="login-medico-senha" placeholder="Sua Senha" required title="Sua Senha">
+                
+                <button type="submit">Entrar como Médico</button>
+            </form>
+            <p>Não tem conta? <a href="#" onclick="mostrarCadastroMedico()">Cadastre-se</a></p>
+            <p><a href="#" onclick="voltarSelecao()">Voltar à seleção de perfil</a></p>
+        </div>
+        
+        <div id="container-medico-cadastro" class="hidden">
+            <h2>Novo Cadastro de Médico</h2>
+            <p id="cadastro-medico-message"></p>
+            <form id="form-cadastro-medico">
+                <label for="cadastro-medico-nome" class="sr-only">Nome Completo</label>
+                <input type="text" id="cadastro-medico-nome" placeholder="Seu Nome Completo" required title="Seu Nome Completo">
+                
+                <label for="cadastro-medico-crm" class="sr-only">CRM</label>
+                <input type="text" id="cadastro-medico-crm" placeholder="Seu CRM" required title="Seu CRM">
+                
+                <div id="div-especialidade-multipla">
+                    <label for="select-adicionar-especialidade">Especialidades:</label>
+                    
+                    <select id="select-adicionar-especialidade" onchange="handleEspecialidadeSelection(this)"> 
+                        <option value="">Adicionar Especialidade</option>
+                        <option value="Cardiologia">Cardiologia</option>
+                        <option value="Dermatologia">Dermatologia</option>
+                        <option value="Ginecologia">Ginecologia</option>
+                        <option value="Ortopedia">Ortopedia</option>
+                        <option value="Pediatria">Pediatria</option>
+                        <option value="Clínica Geral">Clínica Geral</option>
+                        <option value="Outra">Outra (Digitar abaixo)</option>
+                    </select>
+
+                    <div id="input-especialidade-personalizada" class="hidden">
+                        <input type="text" id="campo-especialidade-personalizada" placeholder="Digite a nova especialidade" />
+                        <button type="button" onclick="addPersonalizedEspecialidade()" class="btn-adicionar-personalizada">Adicionar Especialidade</button>
+                    </div>
+                    
+                    <div id="lista-especialidades-selecionadas" class="lista-especialidades-box">
+                        <span class="mensagem-sem-especialidade">Nenhuma especialidade adicionada.</span>
+                        </div>
+                </div>
+                
+                <label for="cadastro-medico-senha" class="sr-only">Senha</label>
+                <input type="password" id="cadastro-medico-senha" placeholder="Crie uma Senha" required title="Crie uma Senha">
+                
+                <button type="submit">Cadastrar e Entrar</button>
+            </form>
+            <p>Já tem conta? <a href="#" onclick="mostrarLoginMedico()">Faça login</a></p>
+            <p><a href="#" onclick="voltarSelecao()">Voltar à seleção de perfil</a></p>
+        </div>
+    </div>
+    
+    <script src="/js/Auth.js"></script> 
+</body>
+</html>
