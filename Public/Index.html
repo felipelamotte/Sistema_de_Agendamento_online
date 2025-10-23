@@ -1,116 +1,116 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">      
-    
-    <title>Sistema de Agendamento</title>
-    
-    <link rel="stylesheet" href="/css/style.css"> 
-    <link rel="stylesheet" href="/css/modal.css"> 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text x='0' y='14'>⚕️</text></svg>" type="image/svg+xml">
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">      
+    
+    <title>Sistema de Agendamento</title>
+    
+    <link rel="stylesheet" href="/css/style.css"> 
+    <link rel="stylesheet" href="/css/modal.css"> 
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text x='0' y='14'>⚕️</text></svg>" type="image/svg+xml">
 </head>
 <body>
-    
-    <header>
-        <h1 id="header-title">Sistema de Agendamento</h1>
-        <button id="logout-button" onclick="logout()" title="Sair da Aplicação">Sair (Logout)</button>
-    </header>
+    
+    <header>
+        <h1 id="header-title">Sistema de Agendamento</h1>
+        <button id="logout-button" onclick="logout()" title="Sair da Aplicação">Sair (Logout)</button>
+    </header>
 
-    <main class="container-principal">
-        
-        <section id="paciente-view">
-            <h2>Médicos Cadastrados</h2>
-            <div id="medicos-container">
-                <p>Carregando lista de médicos...</p>
-                            </div>
+    <main class="container-principal">
+        
+        <section id="paciente-view">
+            <h2>Médicos Cadastrados</h2>
+            <div id="medicos-container">
+                <p>Carregando lista de médicos...</p>
+            </div>
 
-            <hr>
+            <hr>
 
-            <h2>Minhas Consultas Agendadas</h2>
-            <div id="paciente-agendamentos-container">
-                <p>Carregando agendamentos...</p>
-            </div>
-            
-            </section>
+            <h2>Minhas Consultas Agendadas</h2>
+            <div id="paciente-agendamentos-container">
+                <p>Carregando agendamentos...</p>
+            </div>
+            
+            </section>
 
-        <section id="medico-view" class="hidden">
-            <h2>Minha Agenda de Consultas</h2>
-            
-            <div id="filtros-container-medico">
-                
-                <form id="form-filtros-medico" onsubmit="event.preventDefault(); carregarAgendamentosMedico();">
-                    
-                    <label for="filtro-status-medico">Status:</label>
-                    <select id="filtro-status-medico" name="status" onchange="carregarAgendamentosMedico()" title="Filtrar por Status da Consulta">
-                        <option value="">Todos os Status</option>
-                        <option value="Pendente">Pendente</option>
-                        <option value="Confirmada">Confirmada</option>
-                        <option value="Realizada">Realizada</option>
-                        <option value="Cancelada">Cancelada</option>
-                    </select>
+        <section id="medico-view" class="hidden">
+            <h2>Minha Agenda de Consultas</h2>
+            
+            <div id="filtros-container-medico">
+                
+                <form id="form-filtros-medico" onsubmit="event.preventDefault(); carregarAgendamentosMedico();">
+                    
+                    <label for="filtro-status-medico">Status:</label>
+                    <select id="filtro-status-medico" name="status" onchange="carregarAgendamentosMedico()" title="Filtrar por Status da Consulta">
+                        <option value="">Todos os Status</option>
+                        <option value="Pendente">Pendente</option>
+                        <option value="Confirmada">Confirmada</option>
+                        <option value="Realizada">Realizada</option>
+                        <option value="Cancelada">Cancelada</option>
+                    </select>
 
-                    <label for="filtro-data-medico">Data:</label>
-                    <input type="date" id="filtro-data-medico" name="dataConsulta" onchange="carregarAgendamentosMedico()" title="Filtrar por Data da Consulta">
-                    
-                    <button type="button" onclick="resetFiltrosMedico()" title="Limpar Filtros de Consulta">Limpar Filtros</button>
-                </form>
-            </div>
+                    <label for="filtro-data-medico">Data:</label>
+                    <input type="date" id="filtro-data-medico" name="dataConsulta" onchange="carregarAgendamentosMedico()" title="Filtrar por Data da Consulta">
+                    
+                    <button type="button" onclick="resetFiltrosMedico()" title="Limpar Filtros de Consulta">Limpar Filtros</button>
+                </form>
+            </div>
 
-            <div id="agendamentos-container-medico"> 
-                <p>Carregando agenda...</p>
-            </div>
-        </section>
-        
-    </main>
+            <div id="agendamentos-container-medico"> 
+                <p>Carregando agenda...</p>
+            </div>
+        </section>
+        
+    </main>
 
-    <div id="modal-agendamento" class="hidden">
-        <div class="modal-conteudo">
-            <h2>Agendar Consulta com <span id="medico-nome"></span></h2>
-            <button class="fechar-modal-btn" onclick="fecharModal()">&times;</button>
-            
-            <form id="form-agendamento" onsubmit="agendarConsulta(event)">
-                <input type="hidden" id="medico-id-input" name="medicoId">
+    <div id="modal-agendamento" class="hidden">
+        <div class="modal-conteudo">
+            <h2>Agendar Consulta com <span id="medico-nome"></span></h2>
+            <button class="fechar-modal-btn" onclick="fecharModal()">&times;</button>
+            
+            <form id="form-agendamento" onsubmit="agendarConsulta(event)">
+                <input type="hidden" id="medico-id-input" name="medicoId">
 
-                <label for="pacienteCpf">CPF do Paciente:</label>
-                <input type="text" 
-                        id="pacienteCpf" 
-                        name="pacienteCpf" 
-                        maxlength="11" 
-                        onblur="buscarPacientePorCpf(this.value)" 
-                        oninput="this.value = this.value.replace(/\D/g,'')"
-                        placeholder="Apenas números"
-                        title="CPF do Paciente"> 
+                <label for="pacienteCpf">CPF do Paciente:</label>
+                <input type="text" 
+                        id="pacienteCpf" 
+                        name="pacienteCpf" 
+                        maxlength="11" 
+                        onblur="buscarPacientePorCpf(this.value)" 
+                        oninput="this.value = this.value.replace(/\D/g,'')"
+                        placeholder="Apenas números"
+                        title="CPF do Paciente"> 
 
-                <p>Paciente: <span id="nomePacienteExibido">Aguardando CPF...</span></p>
-                
-                <div id="cadastro-paciente-container" class="escondido">
-                    <h4>Paciente não encontrado. Cadastre agora:</h4>
-                    <label for="nomePacienteNovo">Nome do Novo Paciente:</label>
-                    <input type="text" 
-                            id="nomePacienteNovo" 
-                            name="nome" 
-                            placeholder="Nome completo do paciente" 
-                            title="Nome completo do novo paciente"
-                            > 
-                    <button type="button" onclick="cadastrarNovoPaciente()" title="Cadastrar novo paciente no sistema">Cadastrar Paciente</button>
-                </div>
-                
-                <label for="especialidadeDesejada">Especialidade Desejada *:</label>
-                <input type="text" id="especialidadeDesejada" name="EspecialidadeDesejada" placeholder="Ex: Cardiologia, Ortopedia" title="Especialidade Desejada"> 
-                
-                <label for="dataConsulta">Data da consulta *:</label>
-                <input type="date" id="dataConsulta" name="dataConsulta" title="Data da Consulta"> 
-                
-                <label for="horaConsulta">Hora *:</label>
-                <input type="time" id="horaConsulta" name="horaConsulta" title="Hora da Consulta"> 
-                
-                <button type="submit" title="Confirmar Agendamento">Confirmar agendamento</button>
-                <button type="button" onclick="fecharModal()" title="Cancelar Agendamento">Cancelar</button>
-            </form>
-        </div>
-    </div>
-    
-    <script src="/js/script.js"></script> 
+                <p>Paciente: <span id="nomePacienteExibido">Aguardando CPF...</span></p>
+                
+                <div id="cadastro-paciente-container" class="escondido">
+                    <h4>Paciente não encontrado. Cadastre agora:</h4>
+                    <label for="nomePacienteNovo">Nome do Novo Paciente:</label>
+                    <input type="text" 
+                            id="nomePacienteNovo" 
+                            name="nome" 
+                            placeholder="Nome completo do paciente" 
+                            title="Nome completo do novo paciente"
+                            > 
+                    <button type="button" onclick="cadastrarNovoPaciente()" title="Cadastrar novo paciente no sistema">Cadastrar Paciente</button>
+                </div>
+                
+                <label for="especialidadeDesejada">Especialidade Desejada *:</label>
+                <input type="text" id="especialidadeDesejada" name="EspecialidadeDesejada" placeholder="Ex: Cardiologia, Ortopedia" title="Especialidade Desejada"> 
+                
+                <label for="dataConsulta">Data da consulta *:</label>
+                <input type="date" id="dataConsulta" name="dataConsulta" title="Data da Consulta"> 
+                
+                <label for="horaConsulta">Hora *:</label>
+                <input type="time" id="horaConsulta" name="horaConsulta" title="Hora da Consulta"> 
+                
+                <button type="submit" title="Confirmar Agendamento">Confirmar agendamento</button>
+                <button type="button" onclick="fecharModal()" title="Cancelar Agendamento">Cancelar</button>
+            </form>
+        </div>
+    </div>
+    
+    <script src="/js/script.js"></script> 
 </body>
 </html>
