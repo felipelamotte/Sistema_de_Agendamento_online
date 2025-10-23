@@ -1,0 +1,145 @@
+/* ------------------------------------------- */
+/* ESTILOS GERAIS DO MODAL (Fundo escuro)     */
+/* ------------------------------------------- */
+#modal-agendamento {
+    /* Oculta o modal por padrão (usado junto com a classe 'hidden' no HTML) */
+    display: none; 
+    
+    /* Posição fixa para cobrir a tela inteira */
+    position: fixed; 
+    z-index: 1000; /* Garante que fique acima de todos os outros elementos */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* Fundo semi-transparente escuro */
+    background-color: rgba(0, 0, 0, 0.7); 
+    
+    /* Centraliza o conteúdo do modal */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ------------------------------------------- */
+/* ESTILOS DO CONTEÚDO DO MODAL (A caixa branca)*/
+/* ------------------------------------------- */
+.modal-conteudo {
+    background-color: #fefefe;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    width: 90%; /* Largura padrão para telas menores */
+    max-width: 500px; /* Largura máxima em telas grandes */
+    position: relative;
+    box-sizing: border-box; /* Garante que padding e borda não aumentem o tamanho total */
+}
+
+/* Título do Modal */
+.modal-conteudo h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    color: #333;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 10px;
+}
+
+/* ------------------------------------------- */
+/* FORMULÁRIO DENTRO DO MODAL                 */
+/* ------------------------------------------- */
+#form-agendamento label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+#form-agendamento input[type="text"],
+#form-agendamento input[type="date"],
+#form-agendamento input[type="time"],
+#form-agendamento input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Estilo para o campo de nome do paciente exibido */
+#nomePacienteExibido {
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* ------------------------------------------- */
+/* BOTÕES DENTRO DO MODAL                     */
+/* ------------------------------------------- */
+#form-agendamento button[type="submit"] {
+    /* Confirmar agendamento (Botão Verde) */
+    background-color: #28a745;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 20px;
+    margin-right: 10px;
+}
+
+#form-agendamento button[type="button"] {
+    /* Cancelar (Botão Cinza) */
+    background-color: #6c757d;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 20px;
+}
+
+#form-agendamento button:hover {
+    opacity: 0.9;
+}
+
+
+/* ------------------------------------------- */
+/* BOTÃO DE FECHAR (X)                        */
+/* ------------------------------------------- */
+.fechar-modal-btn {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.fechar-modal-btn:hover,
+.fechar-modal-btn:focus {
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* ------------------------------------------- */
+/* UTILITÁRIOS                                */
+/* ------------------------------------------- */
+/* A classe 'hidden' é aplicada no JS para esconder/mostrar o modal */
+.hidden {
+    display: none !important;
+}
+
+/* Estilos para o container de cadastro de paciente que é escondido */
+#cadastro-paciente-container.escondido {
+    display: none;
+}

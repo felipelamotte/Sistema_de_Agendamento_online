@@ -125,11 +125,34 @@ async function carregarMedicos() {
             data.medicos.forEach(medico => {
                 const crmExibido = medico.CRM || 'Não informado'; 
                 
+                // NOVO: Prepara a lista de convênios
+                const convenios = medico.Convenios || [];
+                let listaConveniosHtml = '';
+
+                if (convenios.length > 0) {
+                    listaConveniosHtml += `<p><strong>Convênios Atendidos:</strong></p><ul>`;
+                    convenios.forEach(convenio => {
+                        // Verifica se o convênio é uma string não vazia
+                        if (convenio && typeof convenio === 'string' && convenio.trim() !== '') {
+                            listaConveniosHtml += `<li>${convenio}</li>`;
+                        }
+                    });
+                    listaConveniosHtml += `</ul>`;
+                } else {
+                    listaConveniosHtml = `<p><strong>Convênios:</strong> Não informado</p>`;
+                }
+                
+                // Finaliza o HTML do card
                 htmlContent += `
                     <div class="medico-card">
                         <h3>Dr. ${medico.Nome}</h3>
                         <p><strong>Especialidade:</strong> ${medico.Especialidade}</p>
                         <p><strong>CRM:</strong> ${crmExibido}</p>
+                        
+                        <div class="convenios-info">
+                            ${listaConveniosHtml}
+                        </div>
+                        
                         <button onclick="abrirModalAgendamento(${medico.ID_Medico}, '${medico.Nome}', '${medico.Especialidade}')">
                             Agendar Consulta
                         </button>
@@ -429,9 +452,9 @@ async function deletarAgendamento(agendamentoId, userType) {
 
 // NOVO: Função para limpar o CPF
 function limparCPF(cpf) {
-    if (!cpf) return '';
-    // Remove caracteres não numéricos (pontos, traços, etc.) e espaços
-    return cpf.replace(/[^\d]/g, '').trim(); 
+    if (!cpf) return '';
+    // Remove caracteres não numéricos (pontos, traços, etc.) e espaços
+    return cpf.replace(/[^\d]/g, '').trim(); 
 }
 
 // Ouve o evento 'Enter' no campo CPF para acionar a busca
@@ -487,8 +510,8 @@ function abrirModalAgendamento(medicoId, medicoNome, medicoEspecialidade = '') {
     // LÓGICA DE SEGURANÇA/RESTRICAO DE CPF PARA PACIENTE LOGADO
     if (userType === 'paciente' && userCPF) {
         // Paciente logado só pode agendar para si mesmo.
-        // CORREÇÃO: Define o valor do input com o CPF limpo para garantir a consistência
-        const cpfLimpoDoUsuario = limparCPF(userCPF);
+        // CORREÇÃO: Define o valor do input com o CPF limpo para garantir a consistência
+        const cpfLimpoDoUsuario = limparCPF(userCPF);
         cpfInput.value = cpfLimpoDoUsuario; 
         cpfInput.readOnly = true; // Bloqueia a edição
         nomePacienteExibido.textContent = userName; // Usa o nome logado
@@ -565,10 +588,10 @@ async function agendarConsulta(event) {
     // Combina data e hora
     const DataHora = dataConsulta && horaConsulta ? `${dataConsulta}T${horaConsulta}:00` : '';
 
-    // Limpa os CPFs para validação e payload
-    const cpfLimpo = limparCPF(pacienteCpfInput);
-    const userCPFLimpo = limparCPF(userCPF);
-    
+    // Limpa os CPFs para validação e payload
+    const cpfLimpo = limparCPF(pacienteCpfInput);
+    const userCPFLimpo = limparCPF(userCPF);
+    
     // **PASSO 2: VALIDAÇÃO BÁSICA**
     if (!cpfLimpo || cpfLimpo.length < 11) {
         alert('Por favor, informe um CPF válido (11 dígitos).');
@@ -576,7 +599,6 @@ async function agendarConsulta(event) {
     }
     if (!DataHora || !especialidadeDesejada) { 
         alert('Por favor, preencha todos os campos obrigatórios (Data/Hora e Especialidade).');
-        // O problema do campo vazio deve ter sido resolvido pela aplicação do .trim() e pela nova lógica.
         return;
     }
     
@@ -661,7 +683,7 @@ async function buscarPacientePorCpf(cpfLimpo) {
     }
     
     // Impedir a busca se o paciente logado não for o dono do CPF digitado.
-    const userCPFLimpo = limparCPF(userCPF);
+    const userCPFLimpo = limparCPF(userCPF);
     if (userType === 'paciente' && userCPFLimpo && userCPFLimpo !== cpfLimpo) {
         alert("Erro: Como paciente, você só pode agendar para o seu próprio CPF.");
         nomePacienteExibido.textContent = 'Acesso Negado';
