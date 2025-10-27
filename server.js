@@ -3,14 +3,15 @@ const mysql = require('mysql2/promise'); // Usando promessas para async/await
 const path = require('path'); 
 const cors = require('cors'); 
 const app = express();
-const port = 4000; 
+// Boas Práticas: Use process.env.PORT em deploy
+const port = process.env.PORT || 4000; 
 
 // ===================================================
-// DEPENDÊNCIAS DE AUTENTICAÇÃO
+// DEPENDÊNCIAS DE AUTENTICAÇÃO E SEGURANÇA
 // ===================================================
 const bcrypt = require('bcryptjs'); 
 const jwt = require('jsonwebtoken'); 
-// 🚨 ATENÇÃO: Use uma chave secreta forte e a armazene em variáveis de ambiente.
+// 🚨 ATENÇÃO: Use dotenv e process.env.JWT_SECRET em produção.
 const JWT_SECRET = 'sua_chave_secreta_aqui_e_muito_forte_e_segura'; 
 
 // ===================================================
@@ -82,7 +83,7 @@ function protegerRota(req, res, next) {
         // Armazena dados do usuário decodificados na requisição
         req.userId = decoded.id;
         req.userTipo = decoded.tipo; // 'paciente' ou 'medico'
-        req.userCpf = decoded.cpf; // Adiciona o CPF do paciente logado para segurança extra.
+        req.userCpf = decoded.cpf; // CPF só existe para paciente logado.
         next(); // Continua para a próxima função da rota
     });
 }
@@ -293,40 +294,76 @@ app.post('/api/medicos', protegerRota, async (req, res) => {
     }
 });
 
-// CORREÇÃO CRÍTICA/REVISÃO: ROTA AGENDAR CONSULTA (Método POST)
+// ROTA: AGENDAR CONSULTA (Método POST) - CORRIGIDA A FALHA DE SEGURANÇA (CPF DE OUTRO PACIENTE)
 app.post('/api/agendamentos', protegerRota, async(req, res) =>{
     let connection;
     try{
-        // CPFPaciente pode ser undefined se o frontend não enviar (ideal para pacientes logados)
         const { ID_Medico, CPFPaciente, DataHora, EspecialidadeDesejada } = req.body;
-        let pacienteId;
+        let pacienteId;
         
-        // Validação de campos essenciais (exceto CPFPaciente, que será validado abaixo)
+        // Validação de campos essenciais
         if (!ID_Medico || !DataHora || !EspecialidadeDesejada) {
             return res.status(400).json({ success: false, message: 'ID do Médico, Data/Hora e Especialidade são obrigatórios.' });
         }
         
         connection = await getConnection();
 
-        // Lógica de Segurança: Define o pacienteId baseado no tipo de usuário
+        // 🚨 CORREÇÃO DE SEGURANÇA APLICADA AQUI:
         if (req.userTipo === 'paciente') {
-            // Paciente logado só pode agendar para si mesmo. Usa o ID do token.
+            // Paciente logado SEMPRE agenda para si mesmo. Usa o ID contido no token.
             pacienteId = req.userId;
-            // Ignora qualquer CPFPaciente enviado no body, forçando o agendamento para o user logado.
+            // O CPFPaciente do corpo da requisição é ignorado para segurança.
         } else {
             // Se não for paciente (ex: médico ou admin), o CPF do paciente é obrigatório no body.
             if (!CPFPaciente) {
                 return res.status(400).json({ success: false, message: 'Para agendar para outro, o CPF do paciente é obrigatório.' });
             }
             
-            // Busca o ID_Paciente usando o CPF fornecido (para outros tipos de user)
+            // Busca o ID_Paciente usando o CPF fornecido
             const [pacientes] = await connection.execute('SELECT ID_Paciente FROM Pacientes WHERE CPF = ?', [CPFPaciente]);
             if(pacientes.length === 0){
                 return res.status(404).json({success: false, message: 'Paciente não encontrado com o CPF fornecido.'});
             }
             pacienteId = pacientes[0].ID_Paciente; 
         }
+        // FIM DA CORREÇÃO DE SEGURANÇA
         
+        // =================================================================
+        //  VERIFICAÇÃO DE CONFLITO DE HORÁRIO
+        // =================================================================
+
+        // 1. Conflito do Médico: Verifica se o médico já tem agendamento na DataHora exata
+        const [conflitoMedico] = await connection.execute(
+            'SELECT ID_Agendamento FROM Agendamento WHERE ID_Medico = ? AND DataHora = ? AND status_consulta != "Cancelado"',
+            [ID_Medico, DataHora]
+        );
+
+        if (conflitoMedico.length > 0) {
+            return res.status(409).json({
+                success: false,
+                message: 'Conflito de horário: O médico já possui um agendamento neste dia e hora.',
+                conflitoId: conflitoMedico[0].ID_Agendamento
+            });
+        }
+        
+        // 2. Conflito do Paciente: Checa se o paciente já tem consulta marcada neste dia/horário.
+        const [conflitoPaciente] = await connection.execute(
+            'SELECT ID_Agendamento FROM Agendamento WHERE ID_Paciente = ? AND DataHora = ? AND status_consulta != "Cancelado"',
+            [pacienteId, DataHora]
+        );
+        
+        if (conflitoPaciente.length > 0) {
+            return res.status(409).json({
+                success: false,
+                message: 'Você já possui uma consulta marcada para este dia e horário.',
+                conflitoId: conflitoPaciente[0].ID_Agendamento
+            });
+        }
+        
+        // =================================================================
+        // FIM DA VALIDAÇÃO
+        // =================================================================
+
         // Configurações de agendamento padrão
         const statusConsulta = 'Pendente';
         const duracaoConsulta = 30; // 30 minutos (Exemplo)
@@ -335,7 +372,7 @@ app.post('/api/agendamentos', protegerRota, async(req, res) =>{
         // Inserção no DB
         const query = 
             'INSERT INTO Agendamento ' +
-            '(ID_Medico, ID_Paciente, ID_Convenio, DataHora, status_consulta, Duracao, EspecialidadeDesejada) ' + // Adicionado EspecialidadeDesejada
+            '(ID_Medico, ID_Paciente, ID_Convenio, DataHora, status_consulta, Duracao, EspecialidadeDesejada) ' + 
             'VALUES (?, ?, ?, ?, ?, ?, ?)';
         
         const [result] = await connection.execute(query, [ID_Medico, pacienteId, idConvenio, DataHora, statusConsulta, duracaoConsulta, EspecialidadeDesejada]);
