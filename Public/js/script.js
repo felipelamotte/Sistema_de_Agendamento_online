@@ -577,7 +577,7 @@ function fecharModal(){
 async function agendarConsulta(event) {
     event.preventDefault(); // Impede o envio tradicional do formulário e o recarregamento da página
 
-    // **PASSO 1: LEITURA E LIMPEZA DOS DADOS**
+    // PASSO 1: LEITURA E LIMPEZA DOS DADOS
     const medicoId = document.getElementById('medico-id-input')?.value.trim();
     const pacienteCpfInput = document.getElementById('pacienteCpf')?.value.trim();
     const especialidadeDesejada = document.getElementById('especialidadeDesejada')?.value.trim();
@@ -592,7 +592,7 @@ async function agendarConsulta(event) {
     const cpfLimpo = limparCPF(pacienteCpfInput);
     const userCPFLimpo = limparCPF(userCPF);
     
-    // **PASSO 2: VALIDAÇÃO BÁSICA**
+    //PASSO 2: VALIDAÇÃO BÁSICA
     if (!cpfLimpo || cpfLimpo.length < 11) {
         alert('Por favor, informe um CPF válido (11 dígitos).');
         return;
@@ -602,7 +602,7 @@ async function agendarConsulta(event) {
         return;
     }
     
-    // **PASSO 3: CORREÇÃO DA LÓGICA DE SEGURANÇA (Paciente logado)**
+    // PASSO 3: CORREÇÃO DA LÓGICA DE SEGURANÇA (Paciente logado)
     // COMPARA O CPF LOGADO LIMPO COM O CPF DO FORMULÁRIO LIMPO
     if (userType === 'paciente' && userCPFLimpo && userCPFLimpo !== cpfLimpo) {
         alert('Erro de segurança: Um paciente logado só pode agendar para o seu próprio CPF.');
@@ -662,7 +662,7 @@ async function agendarConsulta(event) {
 }
 
 
-// AJUSTADO: Função buscarPacientePorCpf (Usa CPF limpo na busca e na validação)
+//  Função buscarPacientePorCpf (Usa CPF limpo na busca e na validação)
 async function buscarPacientePorCpf(cpfLimpo) {
     const nomePacienteExibido = document.getElementById('nomePacienteExibido');
     const nomeNovoInput = document.getElementById('nomePacienteNovo'); 
@@ -735,7 +735,7 @@ async function buscarPacientePorCpf(cpfLimpo) {
 }
 
 
-// AJUSTADO: Função cadastrarNovoPaciente (Usa CPF limpo no payload)
+// Função cadastrarNovoPaciente (Usa CPF limpo no payload)
 async function cadastrarNovoPaciente(cpfLimpo, nome) {
     if (!cpfLimpo || !nome) return false;
     

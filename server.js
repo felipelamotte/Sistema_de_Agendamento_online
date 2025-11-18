@@ -308,7 +308,7 @@ app.post('/api/agendamentos', protegerRota, async(req, res) =>{
         
         connection = await getConnection();
 
-        // 🚨 CORREÇÃO DE SEGURANÇA APLICADA AQUI:
+        
         if (req.userTipo === 'paciente') {
             // Paciente logado SEMPRE agenda para si mesmo. Usa o ID contido no token.
             pacienteId = req.userId;
@@ -326,7 +326,7 @@ app.post('/api/agendamentos', protegerRota, async(req, res) =>{
             }
             pacienteId = pacientes[0].ID_Paciente; 
         }
-        // FIM DA CORREÇÃO DE SEGURANÇA
+        
         
         // =================================================================
         //  VERIFICAÇÃO DE CONFLITO DE HORÁRIO
@@ -405,7 +405,6 @@ app.get('/api/agendamentos', protegerRota, async (req, res) => {
             queryParams.push(req.userId);
         }
 
-        // Filtros opcionais (principalmente para um Admin ou visão mais ampla)
         // Nota: O filtro 'medicoId' só funcionará se o user não for 'medico' (já filtrado acima)
         if (req.userTipo !== 'medico' && medicoId) { whereClauses.push('A.ID_Medico = ?'); queryParams.push(medicoId); }
         if (status) { whereClauses.push('A.status_consulta = ?'); queryParams.push(status); }
@@ -500,7 +499,7 @@ app.delete('/api/agendamentos/:id', protegerRota, async(req, res) => {
 });
 
 // ===================================================
-// ROTAS DE DADOS (NÃO REQUEREM AUTENTICAÇÃO FORTE)
+// ROTAS DE DADOS 
 // ===================================================
 
 // ROTA: BUSCAR PACIENTE POR CPF (GET) - Útil para preencher formulário de agendamento

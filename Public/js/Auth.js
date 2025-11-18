@@ -8,7 +8,7 @@ const API_URL_BASE = 'http://localhost:4000/api';
 let especialidadesSelecionadas = [];
 
 // ==============================================
-// 1. Mapeamento de Event Listeners
+// 1. Mapeamento de Event Listeners (CORRIGIDO)
 // ==============================================
 document.addEventListener('DOMContentLoaded', () => {
     // Paciente
@@ -16,12 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('form-cadastro-paciente')?.addEventListener('submit', realizarCadastroPaciente);
 
     // Médico
-    // O ID no HTML revisado é 'container-medico-login' mas o form é 'form-login-medico'
     document.getElementById('form-login-medico')?.addEventListener('submit', realizarLoginMedico);
     document.getElementById('form-cadastro-medico')?.addEventListener('submit', realizarCadastroMedico);
-
-    // NOVO: Listener para adicionar especialidade
-    document.getElementById('select-adicionar-especialidade')?.addEventListener('change', adicionarEspecialidade);
 
     // NOVO: Listener para o botão de adicionar especialidade personalizada
     document.querySelector('.btn-adicionar-personalizada')?.addEventListener('click', adicionarEspecialidadePersonalizada);
@@ -40,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /**
  * Função centralizada para controlar a visibilidade das seções.
- * Usada por todos os botões de navegação e redirecionamentos pós-cadastro/login.
  */
 function navigateTo(targetId) {
     // Lista de todos os containers de navegação principais (baseado no HTML revisado)
@@ -99,13 +94,25 @@ function mostrarLoginMedico() { navigateTo('container-medico-login'); }
 
 
 // ==============================================
-// 3. FUNÇÕES DE GESTÃO DE ESPECIALIDADES 
+// 3. FUNÇÕES DE GESTÃO DE ESPECIALIDADES (CORRIGIDO)
 // ==============================================
 
 function renderizarEspecialidades() {
     const listaDiv = document.getElementById('lista-especialidades-selecionadas');
-    // Campo hidden para onde o valor será enviado no form
-    const inputFinal = document.getElementById('cadastro-medico-especialidade-final'); 
+    
+    // Campo hidden para onde o valor será enviado no form (Remoção da criação dinâmica)
+    let inputFinal = document.getElementById('cadastro-medico-especialidade-final');
+    
+    // Se o input hidden NÃO EXISTE no HTML, criamos ele (melhor seria ter ele fixo no HTML)
+    if (!inputFinal) {
+        inputFinal = document.createElement('input'); 
+        inputFinal.type = 'hidden';
+        inputFinal.id = 'cadastro-medico-especialidade-final';
+        inputFinal.name = 'especialidade';
+        const form = document.getElementById('form-cadastro-medico');
+        if(form) form.appendChild(inputFinal);
+    }
+
     if (!listaDiv || !inputFinal) return; 
 
     listaDiv.innerHTML = '';
@@ -114,11 +121,9 @@ function renderizarEspecialidades() {
     if (especialidadesSelecionadas.length === 0) {
         listaDiv.innerHTML = '<span class="mensagem-sem-especialidade">Nenhuma especialidade adicionada.</span>';
         inputFinal.value = '';
-        inputFinal.removeAttribute('required'); 
         messageDisplay.textContent = 'Adicione pelo menos uma especialidade para cadastrar.';
         messageDisplay.style.color = 'red';
     } else {
-        inputFinal.setAttribute('required', 'required'); 
         // Atualiza o input hidden com a lista para ser enviada (string separada por vírgula)
         inputFinal.value = especialidadesSelecionadas.join(','); 
         messageDisplay.textContent = ''; // Limpa a mensagem de erro
@@ -144,6 +149,7 @@ function renderizarEspecialidades() {
     }
 }
 
+
 function adicionarEspecialidade(event) {
     const select = event.target;
     const especialidade = select.value;
@@ -156,7 +162,7 @@ function adicionarEspecialidade(event) {
         select.value = ""; // Reseta o select
         return;
     } else {
-        inputPersonalizadoDiv.classList.add('hidden');
+        //inputPersonalizadoDiv.classList.add('hidden'); // Comentado para evitar que esconda o campo personalizado enquanto digita
     }
 
     // 2. Lógica para adicionar especialidade da lista pré-definida
@@ -166,6 +172,30 @@ function adicionarEspecialidade(event) {
     }
     // Reseta o select para a opção padrão
     select.value = "";
+}
+
+
+function handleEspecialidadeSelection(selectElement) {
+    const selectedValue = selectElement.value;
+    const inputPersonalizadoDiv = document.getElementById('input-especialidade-personalizada');
+    
+    // 1. Lógica para mostrar/esconder o campo de texto
+    if (selectedValue === 'Outra') { 
+        inputPersonalizadoDiv.classList.remove('hidden');
+        document.getElementById('campo-especialidade-personalizada').focus();
+        selectElement.value = ""; // Reseta o select
+        return;
+    } else {
+        inputPersonalizadoDiv.classList.add('hidden');
+    }
+
+    // 2. Lógica para adicionar especialidade da lista pré-definida
+    if (selectedValue && selectedValue !== 'Outra' && !especialidadesSelecionadas.includes(selectedValue)) {
+        especialidadesSelecionadas.push(selectedValue);
+        renderizarEspecialidades();
+    }
+    // Reseta o select para a opção padrão
+    selectElement.value = "";
 }
 
 function adicionarEspecialidadePersonalizada() {
@@ -294,7 +324,7 @@ async function realizarCadastroPaciente(event) {
 
 
 // ==============================================
-// 5. LÓGICA DE LOGIN/CADASTRO DE MÉDICO
+// 5. LÓGICA DE LOGIN/CADASTRO DE MÉDICO (FINALMENTE CORRIGIDO)
 // ==============================================
 async function realizarLoginMedico(event) {
     event.preventDefault(); 
@@ -336,15 +366,18 @@ async function realizarCadastroMedico(event) {
 
     const nome = document.getElementById('cadastro-medico-nome').value;
     const crm = document.getElementById('cadastro-medico-crm').value;
-    // Pega o valor do input hidden que foi preenchido pelo JS (string separada por vírgula)
-    const especialidade = document.getElementById('cadastro-medico-especialidade-final').value; 
+    
+    // 🚨 CORREÇÃO FINAL: Usa o array em memória para criar a string de especialidades.
+    // Isso é mais confiável do que ler o campo hidden.
+    const especialidade = especialidadesSelecionadas.join(','); 
+    
     const senha = document.getElementById('cadastro-medico-senha').value;
     const messageDisplay = document.getElementById('cadastro-medico-message');
     messageDisplay.textContent = 'Aguarde...';
     messageDisplay.style.color = 'black';
 
-    // Validação de múltiplas especialidades
-    if (!especialidade) {
+    // 🚨 VALIDAÇÃO CORRIGIDA: Checa o array em memória
+    if (especialidadesSelecionadas.length === 0) {
         messageDisplay.textContent = 'Por favor, adicione pelo menos uma especialidade.';
         messageDisplay.style.color = 'red';
         return;
@@ -382,10 +415,13 @@ async function realizarCadastroMedico(event) {
     }
 }
 
-// Necessário para que as funções de navegação sejam acessíveis aos 'onclick' no HTML.
+// 🚨 FUNÇÕES GLOBAIS: EXPOSIÇÃO CORRIGIDA PARA INCLUIR handleEspecialidadeSelection
+// O HTML usa onchange="handleEspecialidadeSelection(this)" e onclick="adicionarEspecialidadePersonalizada()"
 window.selecionarPerfil = selecionarPerfil;
 window.voltarSelecao = voltarSelecao;
 window.mostrarCadastroPaciente = mostrarCadastroPaciente;
 window.mostrarLoginPaciente = mostrarLoginPaciente;
 window.mostrarCadastroMedico = mostrarCadastroMedico;
 window.mostrarLoginMedico = mostrarLoginMedico;
+window.handleEspecialidadeSelection = handleEspecialidadeSelection; // Expor a função do SELECT
+window.adicionarEspecialidadePersonalizada = adicionarEspecialidadePersonalizada; // Expor a função do botão
