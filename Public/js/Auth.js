@@ -1,7 +1,7 @@
 // /js/Auth.js
 
 // ==============================================
-// CONFIGURAÇÕES GLOBAIS 🎯
+// CONFIGURAÇÕES GLOBAIS 
 // ==============================================
 const API_URL_BASE = 'http://localhost:4000/api';
 // Armazenamento temporário das especialidades
@@ -367,7 +367,7 @@ async function realizarCadastroMedico(event) {
     const nome = document.getElementById('cadastro-medico-nome').value;
     const crm = document.getElementById('cadastro-medico-crm').value;
     
-    // 🚨 CORREÇÃO FINAL: Usa o array em memória para criar a string de especialidades.
+    // Usa o array em memória para criar a string de especialidades.
     // Isso é mais confiável do que ler o campo hidden.
     const especialidade = especialidadesSelecionadas.join(','); 
     
@@ -376,7 +376,7 @@ async function realizarCadastroMedico(event) {
     messageDisplay.textContent = 'Aguarde...';
     messageDisplay.style.color = 'black';
 
-    // 🚨 VALIDAÇÃO CORRIGIDA: Checa o array em memória
+    // 🚨 VALIDAÇÃO : Checa o array em memória
     if (especialidadesSelecionadas.length === 0) {
         messageDisplay.textContent = 'Por favor, adicione pelo menos uma especialidade.';
         messageDisplay.style.color = 'red';

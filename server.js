@@ -11,7 +11,7 @@ const port = process.env.PORT || 4000;
 // ===================================================
 const bcrypt = require('bcryptjs'); 
 const jwt = require('jsonwebtoken'); 
-// 🚨 ATENÇÃO: Use dotenv e process.env.JWT_SECRET em produção.
+
 const JWT_SECRET = 'sua_chave_secreta_aqui_e_muito_forte_e_segura'; 
 
 // ===================================================
@@ -294,7 +294,7 @@ app.post('/api/medicos', protegerRota, async (req, res) => {
     }
 });
 
-// ROTA: AGENDAR CONSULTA (Método POST) - CORRIGIDA A FALHA DE SEGURANÇA (CPF DE OUTRO PACIENTE)
+// ROTA: AGENDAR CONSULTA (Método POST) 
 app.post('/api/agendamentos', protegerRota, async(req, res) =>{
     let connection;
     try{
